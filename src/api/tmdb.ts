@@ -20,6 +20,7 @@ export interface MovieDetails {
   title: string;
   popularity: number;
   overview: string;
+  release_date: string;
   backdrop_path?: string;
 }
 
