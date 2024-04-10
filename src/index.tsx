@@ -13,11 +13,14 @@ import { Provider } from "react-redux";
 import store from "./store";
 import Movies from "./features/Movies/Movies";
 import Home from "./features/Home/Home";
+import { ErrorBoundary } from "./ErrorBoundary";
 
 function AppEntrypoint() {
   return (
     <Provider store={store}>
-      <App />
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
     </Provider>
   );
 }
@@ -53,3 +56,4 @@ root.render(
 );
 
 reportWebVitals();
+

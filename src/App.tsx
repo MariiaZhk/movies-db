@@ -1,34 +1,9 @@
-import {
-  AppBar,
-  CssBaseline,
-  Link,
-  ThemeProvider,
-  Toolbar,
-  Typography,
-  createTheme,
-} from "@mui/material";
-import { Link as RouterLink, Outlet } from "react-router-dom";
-import LiveTvOutlinedIcon from "@mui/icons-material/LiveTvOutlined";
+import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { Outlet } from "react-router-dom";
+import { AppHeader } from "./AppHeader";
+import { AuthContext, AuthInfo, anonymous } from "./AuthContext";
+import { useState } from "react";
 
-function HeaderLink({
-  children,
-  to,
-}: {
-  children: React.ReactNode;
-  to: string;
-}) {
-  return (
-    <Link
-      component={RouterLink}
-      to={to}
-      variant="button"
-      color="inherit"
-      sx={{ my: 1, mx: 1.5 }}
-    >
-      {children}
-    </Link>
-  );
-}
 const defaultTheme = createTheme({
   palette: {
     primary: { main: "#009499" },
@@ -36,30 +11,28 @@ const defaultTheme = createTheme({
   },
 });
 
+const fakeAuth: AuthInfo = {
+  user: {
+    name: "Maria",
+  },
+};
 function App() {
+  const [auth, setAuth] = useState<AuthInfo>({ user: anonymous });
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-      <AppBar>
-        <Toolbar>
-          <LiveTvOutlinedIcon sx={{ mr: 2 }} />
-          <Typography variant="h6" color="inherit" noWrap>
-            Top movies
-          </Typography>
-          <nav>
-            <HeaderLink to="/">Home</HeaderLink>
-
-            <HeaderLink to="/movies">Movies</HeaderLink>
-
-            <HeaderLink to="/about">About</HeaderLink>
-          </nav>
-        </Toolbar>
-      </AppBar>
-      <main>
-        <Outlet />
-      </main>
+      <AuthContext.Provider value={auth}>
+        <AppHeader
+          onLoginClick={() => setAuth(fakeAuth)}
+          onLogoutClick={() => setAuth({ user: anonymous })}
+        />
+        <main>
+          <Outlet />
+        </main>
+      </AuthContext.Provider>
     </ThemeProvider>
   );
 }
 
 export default App;
+

@@ -23,10 +23,15 @@ export interface MovieDetails {
   release_date: string;
   backdrop_path?: string;
 }
-
 interface PageResponse<TResult> {
   page: number;
   results: TResult[];
+  total_pages: number;
+}
+interface PageDetails<TResult> {
+  page: number;
+  results: TResult[];
+  totalPages: number;
 }
 
 interface Config {
@@ -38,10 +43,15 @@ export const client = {
   async getConfig() {
     return get<Config>("/configuration");
   },
-  async getNowPlaying(): Promise<MovieDetails[]> {
+  async getNowPlaying(page: number = 1): Promise<PageDetails<MovieDetails>> {
     const response = await get<PageResponse<MovieDetails>>(
-      "/movie/now_playing?page=1"
+      `/movie/now_playing?page=${page}`
     );
-    return response.results;
+    return {
+      results: response.results,
+      page: response.page,
+      totalPages: response.total_pages,
+    };
   },
 };
+

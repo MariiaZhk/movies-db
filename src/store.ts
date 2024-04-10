@@ -1,6 +1,6 @@
 import { composeWithDevTools } from "@redux-devtools/extension";
 
-import rootReducer from "./reducers";
+import rootReducer from "./redux/reducer";
 import { UnknownAction, applyMiddleware, createStore } from "redux";
 import { ThunkAction, thunk } from "redux-thunk";
 
@@ -19,3 +19,4 @@ export type AppThunk<ReturnType> = ThunkAction<
 export type RootState = ReturnType<typeof store.getState>;
 
 export default store;
+
