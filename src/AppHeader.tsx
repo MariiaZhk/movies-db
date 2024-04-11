@@ -10,7 +10,7 @@ interface AppHeaderProps {
 }
 export function AppHeader({ onLoginClick, onLogoutClick }: AppHeaderProps) {
   return (
-    <AppBar>
+    <AppBar position="static">
       <Toolbar>
         <LiveTvOutlinedIcon sx={{ mr: 2 }} />
         <Typography variant="h6" color="inherit" noWrap>

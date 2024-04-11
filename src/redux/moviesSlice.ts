@@ -1,4 +1,4 @@
-import { client } from "../api/tmdb";
+import { MoviesFilters, client } from "../api/tmdb";
 import { ActionWithPayload, createReducer } from "./utils";
 import { AppThunk } from "../store";
 
@@ -24,6 +24,7 @@ const initialState: MovieState = {
   page: 0,
   hasMorePages: true,
 };
+
 const moviesLoaded = (
   movies: Movie[],
   page: number,
@@ -37,20 +38,30 @@ const moviesIsLoading = () => ({
   type: "movies/loading",
 });
 
-export function fetchNextPage(): AppThunk<Promise<void>> {
+export const resetMovies = () => ({
+  type: "movies/reset",
+});
+
+export function fetchNextPage(
+  filters: MoviesFilters = {}
+): AppThunk<Promise<void>> {
   return async (dispatch, getState) => {
     const nextPage = getState().movies.page + 1;
-    dispatch(fetchPage(nextPage));
+    dispatch(fetchPage(nextPage, filters));
   };
 }
-function fetchPage(page: number): AppThunk<Promise<void>> {
+function fetchPage(
+  page: number,
+  filters: MoviesFilters
+): AppThunk<Promise<void>> {
   return async (dispatch) => {
     dispatch(moviesIsLoading());
+
     const configuration = await client.getConfig();
     const imageUrl = configuration.images.base_url;
-    const nowPlaying = await client.getNowPlaying(page);
+    const responseMovies = await client.getMovies(page, filters);
 
-    const mappedResults: Movie[] = nowPlaying.results.map((m) => ({
+    const mappedResults: Movie[] = responseMovies.results.map((m) => ({
       id: m.id,
       title: m.title,
       overview: m.overview,
@@ -58,7 +69,7 @@ function fetchPage(page: number): AppThunk<Promise<void>> {
       release_date: m.release_date,
       image: m.backdrop_path ? `${imageUrl}w780${m.backdrop_path}` : undefined,
     }));
-    const hasMorePages = nowPlaying.page < nowPlaying.totalPages;
+    const hasMorePages = responseMovies.page < responseMovies.totalPages;
     dispatch(moviesLoaded(mappedResults, page, hasMorePages));
   };
 }
@@ -80,11 +91,14 @@ const moviesReducer = createReducer<MovieState>(initialState, {
       isLoading: false,
     };
   },
-  "movies/loading": (state, action) => {
+  "movies/loading": (state) => {
     return {
       ...state,
       isLoading: true,
     };
+  },
+  "movies/reset": (state) => {
+    return { ...initialState };
   },
 });
 
