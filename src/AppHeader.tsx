@@ -19,9 +19,8 @@ export function AppHeader({ onLoginClick, onLogoutClick }: AppHeaderProps) {
         <Box sx={{ flexGrow: 1 }}>
           <nav>
             <HeaderLink to="/">Home</HeaderLink>
-
             <HeaderLink to="/movies">Movies</HeaderLink>
-
+            <HeaderLink to="/extra">Extra</HeaderLink>
             <HeaderLink to="/about">About</HeaderLink>
           </nav>
         </Box>
