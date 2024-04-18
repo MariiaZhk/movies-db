@@ -1,7 +1,7 @@
 import MovieCard from "./MovieCard";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useState } from "react";
 import { Container, Grid, LinearProgress, Typography } from "@mui/material";
-import { AuthContext, anonymous } from "../../AuthContext";
+
 import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
 import MoviesFilter from "./MoviesFilter";
 import {
@@ -10,6 +10,7 @@ import {
   useGetConfigQuery,
   useGetMoviesQuery,
 } from "../../services/tmdb";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const initialQuery: MoviesQuery = {
   page: 1,
@@ -17,19 +18,16 @@ const initialQuery: MoviesQuery = {
 };
 
 export default function Movies() {
+  const { isAuthenticated, user } = useAuth0();
   const [query, setQuery] = useState<MoviesQuery>(initialQuery);
   const { data: config } = useGetConfigQuery();
   const { data, isFetching } = useGetMoviesQuery(query);
   const movies = data?.results ?? [];
   const hasMorePages = data?.hasMorePages;
 
-  function formatImgUrl(path?: string) {
+  function formatImgUrl(path?: string | null) {
     return path && config ? `${config?.images.base_url}w780${path}` : undefined;
   }
-
-  const { user } = useContext(AuthContext);
-
-  const logged = user !== anonymous;
 
   const onIntersection = useCallback(() => {
     if (hasMorePages) {
@@ -42,10 +40,10 @@ export default function Movies() {
   const handleAddFavorite = useCallback(
     (id: number) => {
       alert(
-        `Not implemented. ${user.name} wants to add film ${id} to favorites`
+        `Not implemented. ${user?.name} wants to add film ${id} to favorites`
       );
     },
-    [user.name]
+    [user?.name]
   );
 
   return (
@@ -69,7 +67,7 @@ export default function Movies() {
             </Typography>
           )}
           <Grid container spacing={4}>
-            {movies.map((m, i) => (
+            {movies?.map((m, i) => (
               <Grid item key={`${m.id}-${i}`} xs={12} sm={6} md={4}>
                 <MovieCard
                   id={m.id}
@@ -79,7 +77,7 @@ export default function Movies() {
                   popularity={m.popularity}
                   release_date={m.release_date}
                   image={formatImgUrl(m.backdrop_path || undefined)}
-                  enableUserActions={logged}
+                  enableUserActions={isAuthenticated}
                   onAddFavoriteClick={handleAddFavorite}
                 />
               </Grid>
