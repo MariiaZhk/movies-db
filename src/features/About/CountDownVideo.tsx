@@ -19,7 +19,7 @@ export function CountDownVideo() {
       <CardMedia>
         <video
           ref={videoRef}
-          src="https://www.pexels.com/download/video/3843430"
+          src="https://www.pexels.com/download/video/3843433"
           height="500"
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}

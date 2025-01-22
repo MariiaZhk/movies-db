@@ -20,12 +20,6 @@ export default function MapView() {
     }
   }, []);
 
-  //   return (
-  //     <Container ref={containerRef} sx={{ width: 850, height: 600, my: 2 }}>
-  //       {popupContainer !== null && createPortal(<Greeting />, popupContainer)}
-  //     </Container>
-  //   );
-  // }
   return (
     <Container ref={containerRef} sx={{ width: 850, height: 600, my: 2 }}>
       {popupContainer && (
